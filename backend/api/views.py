@@ -38,13 +38,13 @@ def send_img(request):
                 
                 if nuevo_registro.most_confident_label is None or nuevo_registro.confidence is None:
                     nuevo_registro.delete()
-                    return JsonResponse({'error': str(e)}, status=400)
+                    return JsonResponse({'error': "Image not detected"}, status=400)
 
                 return JsonResponse({
                     'most_confident_label' : nuevo_registro.most_confident_label,
                     'confidence' : nuevo_registro.confidence
                 })
             except Exception as e:
-                return JsonResponse({'error': str(e)}, status=400)
+                return JsonResponse({'error': "Image not detected"}, status=400)
 
     return JsonResponse({'error': 'Método no permitido'}, status=405)

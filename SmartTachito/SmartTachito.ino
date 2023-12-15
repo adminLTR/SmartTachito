@@ -2,6 +2,7 @@
 #include <HTTPClient.h>
 #include <LiquidCrystal_I2C.h>
 #include <base64.h>
+#include <ESP32Servo.h>
 #include "Ultrasonic.h"
 #include "Alarm.h"
 
@@ -11,13 +12,14 @@ const char *password = "2J8LQV5L"; */
 const char *ssid = "LT";
 const char *password = "prudencio";
 
-
 const int lcdColumns = 16;
 const int lcdRows = 2;
 
 LiquidCrystal_I2C lcd(0x27, lcdColumns, lcdRows);  
 UltraSonic ultrasonic(27, 26);
 Alarm alarmC(12);
+Servo servo;
+const int servoPin = 23;
 
 const char* serverUrl = "http://192.168.146.193:8000/api/sendImg/";
 const char* contentType = "application/json";
@@ -25,9 +27,14 @@ const char* cameraServer = "http://192.168.146.129/capture";
 
 
 void parseJsonString(String jsonString, String& mostConfidentLabel, double& confidence) {
-  int index = jsonString.indexOf(',');
-  mostConfidentLabel = jsonString.substring(26, index-1);
-  confidence = jsonString.substring(index+16, jsonString.length()-1).toDouble();
+  if (jsonString.indexOf("error")>=0) {
+    mostConfidentLabel = "Error";
+    confidence = 0;
+  } else {
+    int index = jsonString.indexOf(',');
+    mostConfidentLabel = jsonString.substring(26, index-1);
+    confidence = jsonString.substring(index+16, jsonString.length()-1).toDouble();
+  }
 }
 
 void caratulaLCD() {
@@ -53,6 +60,16 @@ void conexionLCD(){
   lcd.print("connected");
 }
 
+void printDetectionLCD(String label, double confidence) {
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print(label);
+  lcd.setCursor(0, 1);
+  lcd.print("%");
+  lcd.setCursor(1, 1);
+  lcd.print(confidence*100);
+}
+
 void setup(){
   lcd.init();                    
   lcd.backlight();
@@ -62,6 +79,8 @@ void setup(){
 
   ultrasonic.begin();
   alarmC.begin();
+  servo.attach(servoPin);
+  servo.write(0);
 
   Serial.begin(9600);
 
@@ -92,18 +111,24 @@ void loop(){
           String payload = "{\"frame\":\"" + base64::encode((uint8_t*)image_data.c_str(), image_data.length()) + "\"}";
           int httpResponseCode = http.POST(payload);
           String response = http.getString();
-          Serial.print("HTTP Response Code: ");
+          /* Serial.print("HTTP Response Code: ");
           Serial.println(httpResponseCode);
+          Serial.print("Response: ");
+          Serial.println(response); */
           Serial.print("Response: ");
           Serial.println(response);
           String mostConfidentLabel;
           double confidence;
           parseJsonString(response, mostConfidentLabel, confidence);
-          Serial.println(mostConfidentLabel);
-          Serial.println(confidence);
+          printDetectionLCD(mostConfidentLabel, confidence);
           http.end();
 
-          alarmC.tick();
+          if (mostConfidentLabel!="Error") {
+            alarmC.tick();   
+            servo.write(90);
+            delay(1500);
+            servo.write(0);
+          }
           
         } else {
           lcd.clear();
@@ -121,5 +146,5 @@ void loop(){
       }
     }
   }
-  delay(2000);
+  delay(1000);
 }
