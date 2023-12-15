@@ -1,0 +1,71 @@
+/* Estilos generales */
+body {
+    font-family: 'Lexend', sans-serif;
+    color: #6C6170;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    color: #003050;
+    text-align: center;
+}
+
+/* Estilos del formulario */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+input[type='file'], 
+input[type='text'] {
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #00A5B6;
+    border-radius: 5px;
+}
+
+input[type='text']::placeholder {
+    color: #6C6170;
+}
+
+button {
+    background-color: #00A5B6;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-top: 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #008C9E;
+}
+
+/* Estilos de los resultados de detección */
+#detection-result {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#detection-result p {
+    color: #003050;
+}
+
+
+.login-logo img {
+    max-width: 200px;
+}
