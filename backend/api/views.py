@@ -20,7 +20,7 @@ class DetectionViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
 
 
-csrf_exempt
+@csrf_exempt
 @require_POST
 def send_img(request):
     if request.method == 'POST':

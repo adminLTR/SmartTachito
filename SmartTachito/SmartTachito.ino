@@ -5,11 +5,11 @@
 #include "Ultrasonic.h"
 #include "Alarm.h"
 
-const char *ssid = "LTR";
-const char *password = "2J8LQV5L";
+/* const char *ssid = "LTR";
+const char *password = "2J8LQV5L"; */
 
-/* const char *ssid = "LT";
-const char *password = "prudencio"; */
+const char *ssid = "LT";
+const char *password = "prudencio";
 
 
 const int lcdColumns = 16;
@@ -19,9 +19,9 @@ LiquidCrystal_I2C lcd(0x27, lcdColumns, lcdRows);
 UltraSonic ultrasonic(27, 26);
 Alarm alarmC(12);
 
-const char* serverUrl = "http://192.168.1.17:8000/api/sendImg/";
+const char* serverUrl = "http://192.168.146.193:8000/api/sendImg/";
 const char* contentType = "application/json";
-const char* cameraServer = "http://192.168.1.11/capture";
+const char* cameraServer = "http://192.168.146.129/capture";
 
 
 void parseJsonString(String jsonString, String& mostConfidentLabel, double& confidence) {
