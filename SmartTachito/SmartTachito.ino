@@ -1,8 +1,10 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
-#include <LiquidCrystal_I2C.h>
+#include <LiquidCrystal_I2C.h>  
 #include <base64.h>
 #include <ESP32Servo.h>
+#include <HardwareSerial.h>
+#include <TinyGPSPlus.h>
 #include "Ultrasonic.h"
 #include "Alarm.h"
 
@@ -14,17 +16,23 @@ const char *password = "prudencio";
 
 const int lcdColumns = 16;
 const int lcdRows = 2;
+#define RXD2 16
+#define TXD2 17
 
 LiquidCrystal_I2C lcd(0x27, lcdColumns, lcdRows);  
 UltraSonic ultrasonic(27, 26);
 Alarm alarmC(12);
 Servo servo;
 const int servoPin = 23;
+HardwareSerial NEO6M(0);
+TinyGPSPlus gps;
 
-const char* serverUrl = "http://192.168.146.193:8000/api/sendImg/";
+double lng = 0;
+double lat = 0;
+
+const char* serverUrl = "http://192.168.62.193:8000/api/sendImg/";
 const char* contentType = "application/json";
-const char* cameraServer = "http://192.168.146.129/capture";
-
+const char* cameraServer = "http://192.168.62.129/capture";
 
 void parseJsonString(String jsonString, String& mostConfidentLabel, double& confidence) {
   if (jsonString.indexOf("error")>=0) {
@@ -34,6 +42,17 @@ void parseJsonString(String jsonString, String& mostConfidentLabel, double& conf
     int index = jsonString.indexOf(',');
     mostConfidentLabel = jsonString.substring(26, index-1);
     confidence = jsonString.substring(index+16, jsonString.length()-1).toDouble();
+  }
+}
+
+void getCoors(double&lng, double&lat) {
+  while (NEO6M.available() > 0) {
+    if (gps.encode(NEO6M.read())) {
+      if (gps.location.isUpdated()) {
+        Serial.println(gps.location.lat(), 6);
+        Serial.println(gps.location.lng(), 6);
+      }
+    }
   }
 }
 
@@ -70,6 +89,18 @@ void printDetectionLCD(String label, double confidence) {
   lcd.print(confidence*100);
 }
 
+void printCoorsLCD(double lng, double lat) {
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("LNG: ");
+  lcd.setCursor(4, 0);
+  lcd.print(lng);
+  lcd.setCursor(0, 1);
+  lcd.print("LAT: ");
+  lcd.setCursor(4, 1);
+  lcd.print(lat);
+}
+
 void setup(){
   lcd.init();                    
   lcd.backlight();
@@ -82,7 +113,7 @@ void setup(){
   servo.attach(servoPin);
   servo.write(0);
 
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   // CONECTION LCD
   WiFi.begin(ssid, password);
@@ -92,10 +123,15 @@ void setup(){
   conexionLCD();
   delay(2000);
   caratulaLCD();
+
+  NEO6M.begin(9600, SERIAL_8N1, RXD2, TXD2);
 }
 
 void loop(){
   int distance = ultrasonic.getDistance();
+  getCoors(lng, lat);
+  /* Serial.println(lng);
+  Serial.println(lat); */
   if (distance<=8 && distance>=0) {
     if (WiFi.status() == WL_CONNECTED) {
       HTTPClient http;
@@ -120,10 +156,12 @@ void loop(){
           String mostConfidentLabel;
           double confidence;
           parseJsonString(response, mostConfidentLabel, confidence);
-          printDetectionLCD(mostConfidentLabel, confidence);
           http.end();
-
+          
           if (mostConfidentLabel!="Error") {
+            printDetectionLCD(mostConfidentLabel, confidence);
+            delay(1500);
+            printCoorsLCD(lng, lat);
             alarmC.tick();   
             servo.write(90);
             delay(1500);
