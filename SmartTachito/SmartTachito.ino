@@ -4,7 +4,7 @@
 #include <base64.h>
 #include <ESP32Servo.h>
 #include <HardwareSerial.h>
-#include <TinyGPSPlus.h>
+// #include <TinyGPSPlus.h>
 #include "Ultrasonic.h"
 #include "Alarm.h"
 
@@ -22,17 +22,19 @@ const int lcdRows = 2;
 LiquidCrystal_I2C lcd(0x27, lcdColumns, lcdRows);  
 UltraSonic ultrasonic(27, 26);
 Alarm alarmC(12);
-Servo servo;
-const int servoPin = 23;
-HardwareSerial NEO6M(0);
-TinyGPSPlus gps;
+Servo servo1;
+Servo servo2;
+Servo servo3;
+Servo servo4;
+// HardwareSerial NEO6M(0); 
+// TinyGPSPl us gps;
 
 double lng = 0;
 double lat = 0;
 
-const char* serverUrl = "http://192.168.62.193:8000/api/sendImg/";
+const char* serverUrl = "http://192.168.51.193:8000/api/sendImg/";
 const char* contentType = "application/json";
-const char* cameraServer = "http://192.168.62.129/capture";
+const char* cameraServer = "http://192.168.51.129/capture";
 
 void parseJsonString(String jsonString, String& mostConfidentLabel, double& confidence) {
   if (jsonString.indexOf("error")>=0) {
@@ -45,7 +47,7 @@ void parseJsonString(String jsonString, String& mostConfidentLabel, double& conf
   }
 }
 
-void getCoors(double&lng, double&lat) {
+/* void getCoors(double&lng, double&lat) {
   while (NEO6M.available() > 0) {
     if (gps.encode(NEO6M.read())) {
       if (gps.location.isUpdated()) {
@@ -54,7 +56,7 @@ void getCoors(double&lng, double&lat) {
       }
     }
   }
-}
+} */
 
 void caratulaLCD() {
   lcd.clear();
@@ -110,8 +112,18 @@ void setup(){
 
   ultrasonic.begin();
   alarmC.begin();
-  servo.attach(servoPin);
-  servo.write(0);
+
+  servo1.attach(23);
+  servo1.write(0);
+
+  servo2.attach(2);
+  servo2.write(0);
+  
+  servo3.attach(4);
+  servo3.write(0);
+  
+  servo4.attach(13);
+  servo4.write(0);
 
   Serial.begin(115200);
 
@@ -124,12 +136,12 @@ void setup(){
   delay(2000);
   caratulaLCD();
 
-  NEO6M.begin(9600, SERIAL_8N1, RXD2, TXD2);
+  // NEO6M.begin(9600, SERIAL_8N1, RXD2, TXD2);
 }
 
 void loop(){
   int distance = ultrasonic.getDistance();
-  getCoors(lng, lat);
+  // getCoors(lng, lat);
   /* Serial.println(lng);
   Serial.println(lat); */
   if (distance<=8 && distance>=0) {
@@ -161,11 +173,18 @@ void loop(){
           if (mostConfidentLabel!="Error") {
             printDetectionLCD(mostConfidentLabel, confidence);
             delay(1500);
-            printCoorsLCD(lng, lat);
+            //printCoorsLCD(lng, lat);
             alarmC.tick();   
-            servo.write(90);
+            
+            servo1.write(90);
+            servo2.write(90);
+            servo3.write(90);
+            servo4.write(90);
             delay(1500);
-            servo.write(0);
+            servo1.write(0);
+            servo2.write(0);
+            servo3.write(0);
+            servo4.write(0);
           }
           
         } else {

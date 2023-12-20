@@ -37,7 +37,7 @@ def send_img(request):
                 nuevo_registro.frame.save(f'{rd.randint(10, 10000)}.jpg', imagen_temporal)
                 
                 if nuevo_registro.most_confident_label is None or nuevo_registro.confidence is None:
-                    nuevo_registro.delete()
+                    
                     return JsonResponse({'error': "Image not detected"}, status=400)
 
                 return JsonResponse({

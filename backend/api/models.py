@@ -88,11 +88,13 @@ class Detection(models.Model):
                 buffer = io.BytesIO()
                 image_with_box_pil = Image.fromarray(image_with_box_rgb)
                 image_with_box_pil.save(buffer, format='JPEG')
-                self.frame_image_detected.save('detected_{}.jpg'.format(self.pk), ContentFile(buffer.getvalue()), save=False)
+                if self.most_confident_label is not None and self.confidence is not None:
+                    self.frame_image_detected.save('detected_{}.jpg'.format(self.pk), ContentFile(buffer.getvalue()), save=False)
 
 
         # Save the updated Detection instance
-        super().save(update_fields=['most_confident_label', 'confidence', 'frame_image_detected'])
+        if self.most_confident_label is not None and self.confidence is not None and self.frame_image_detected is not None:                    
+            super().save(update_fields=['most_confident_label', 'confidence', 'frame_image_detected'])
 
 
     def admin_image(self):
