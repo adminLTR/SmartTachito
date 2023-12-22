@@ -38,8 +38,14 @@
 /* const char* ssid = "LTR";
 const char* password = "2J8LQV5L"; */
 
-const char *ssid = "LT";
-const char *password = "prudencio";
+/* const char *ssid = "LT";
+const char *password = "prudencio"; */
+
+const char *ssid = "esp32xd";
+const char *password = "SmartTachito";
+
+/* const char *ssid = "yisus";
+const char *password = "jorgitoprecioso"; */
 
 void startCameraServer();
 void setupLedFlash(int pin);

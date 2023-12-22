@@ -1,5 +1,4 @@
-# SmartTachito
+# Smart Tachito
+Smart Tachito, tu terror 👻
 
-## Collaborators
-- LTprograms (La Torre Romero, Jose Luis)
-- JorgeKtch (Quispe Villaverde, Jorge Jesus)
+Hecho cn Python 3.11

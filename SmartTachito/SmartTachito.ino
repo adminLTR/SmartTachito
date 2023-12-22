@@ -1,40 +1,48 @@
 #include <WiFi.h>
+// #include <ESPAsyncWebSrv.h>
 #include <HTTPClient.h>
 #include <LiquidCrystal_I2C.h>  
 #include <base64.h>
 #include <ESP32Servo.h>
 #include <HardwareSerial.h>
-// #include <TinyGPSPlus.h>
+#include <TinyGPSPlus.h>
 #include "Ultrasonic.h"
 #include "Alarm.h"
+#include "Lcd.h"
 
 /* const char *ssid = "LTR";
 const char *password = "2J8LQV5L"; */
 
-const char *ssid = "LT";
-const char *password = "prudencio";
+/* const char *ssid = "LT";
+const char *password = "prudencio"; */
+
+/* const char *ssid = "yisus";
+const char *password = "jorgitoprecioso"; */
+
+const char *ssid = "esp32xd";
+const char *password = "SmartTachito";
 
 const int lcdColumns = 16;
 const int lcdRows = 2;
-#define RXD2 16
-#define TXD2 17
+/* #define RXD2 16
+#define TXD2 17 */
 
 LiquidCrystal_I2C lcd(0x27, lcdColumns, lcdRows);  
 UltraSonic ultrasonic(27, 26);
 Alarm alarmC(12);
-Servo servo1;
-Servo servo2;
-Servo servo3;
-Servo servo4;
-// HardwareSerial NEO6M(0); 
-// TinyGPSPl us gps;
+Servo servoPlastik;
+Servo servoPaper;
+Servo servoGeneral;
+/* HardwareSerial NEO6M(0); 
+TinyGPSPlus gps; */
 
-double lng = 0;
-double lat = 0;
+const int light = 32;
 
-const char* serverUrl = "http://192.168.51.193:8000/api/sendImg/";
+const char* serverUrl = " http://192.168.4.2:8000/api/sendImg/";
 const char* contentType = "application/json";
-const char* cameraServer = "http://192.168.51.129/capture";
+const char* cameraServer = "http://192.168.4.3/capture";
+
+// AsyncWebServer server(80); 
 
 void parseJsonString(String jsonString, String& mostConfidentLabel, double& confidence) {
   if (jsonString.indexOf("error")>=0) {
@@ -47,105 +55,87 @@ void parseJsonString(String jsonString, String& mostConfidentLabel, double& conf
   }
 }
 
-/* void getCoors(double&lng, double&lat) {
+/* void getCoors(double& lng, double& lat) {
   while (NEO6M.available() > 0) {
     if (gps.encode(NEO6M.read())) {
-      if (gps.location.isUpdated()) {
+      Serial.print("Satellites: ");
+      Serial.println(gps.satellites.value());
+      
+      if (gps.location.isValid()) {
+        Serial.print("Latitude: ");
         Serial.println(gps.location.lat(), 6);
+        Serial.print("Longitude: ");
         Serial.println(gps.location.lng(), 6);
+        
+        lat = gps.location.lat();
+        lng = gps.location.lng();
+        return;
+      } else {
+        Serial.println("Invalid GPS data");
       }
     }
   }
 } */
 
-void caratulaLCD() {
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("JorgeKtch LuisLT");
-  lcd.setCursor(1, 1);
-  lcd.print("Smart  Tachito");
-}
-void conectandoLCD() {
-  lcd.setCursor(0, 0);
-  lcd.print("Connecting");
-  lcd.setCursor(0, 1);
-  lcd.print("to red...");
-  delay(1000);
-  lcd.clear();
-}
-void conexionLCD(){
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("Successfully");
-  lcd.setCursor(0, 1);
-  lcd.print("connected");
-}
-
-void printDetectionLCD(String label, double confidence) {
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print(label);
-  lcd.setCursor(0, 1);
-  lcd.print("%");
-  lcd.setCursor(1, 1);
-  lcd.print(confidence*100);
-}
-
-void printCoorsLCD(double lng, double lat) {
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("LNG: ");
-  lcd.setCursor(4, 0);
-  lcd.print(lng);
-  lcd.setCursor(0, 1);
-  lcd.print("LAT: ");
-  lcd.setCursor(4, 1);
-  lcd.print(lat);
-}
-
 void setup(){
   lcd.init();                    
   lcd.backlight();
-  caratulaLCD();
+  LCD::caratulaLCD(lcd);
   delay(1500);
   lcd.clear();
 
   ultrasonic.begin();
   alarmC.begin();
 
-  servo1.attach(23);
-  servo1.write(0);
+  servoPlastik.attach(23);
+  servoPlastik.write(0);
 
-  servo2.attach(2);
-  servo2.write(0);
+  servoPaper.attach(2);
+  servoPaper.write(0);
   
-  servo3.attach(4);
-  servo3.write(0);
-  
-  servo4.attach(13);
-  servo4.write(0);
+  servoGeneral.attach(4);
+  servoGeneral.write(0);
 
   Serial.begin(115200);
 
   // CONECTION LCD
-  WiFi.begin(ssid, password);
+  /* WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
-    conectandoLCD();
-  }
-  conexionLCD();
+    LCD::conectandoLCD(lcd);
+  } */
+  WiFi.softAP(ssid, password);
+
+  Serial.println("Punto de acceso iniciado");
+  Serial.print("Dirección IP del servidor: ");
+  Serial.println(WiFi.softAPIP());
+
+  pinMode(light, OUTPUT);
+
+  /* server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+    String response = "WiFi Credentials: " + String(ssid) + ", " + String(password);
+    request->send(200, "text/plain", response);
+  });
+
+  server.begin(); */
+
+  LCD::conexionLCD(lcd);
   delay(2000);
-  caratulaLCD();
+  LCD::caratulaLCD(lcd);
 
   // NEO6M.begin(9600, SERIAL_8N1, RXD2, TXD2);
 }
 
 void loop(){
+  /* double longitude = 0;
+  double latitude = 0; */
   int distance = ultrasonic.getDistance();
-  // getCoors(lng, lat);
-  /* Serial.println(lng);
-  Serial.println(lat); */
-  if (distance<=8 && distance>=0) {
-    if (WiFi.status() == WL_CONNECTED) {
+  // getCoors(longitude, latitude);
+  /* Serial.println(longitude);
+  Serial.println(latitude); */
+  Serial.println(distance);
+  if (distance<=30 && distance>=0) {
+    digitalWrite(light, 1);
+    //if (WiFi.status() == WL_CONNECTED) {
       HTTPClient http;
       http.begin(cameraServer);
 
@@ -171,20 +161,36 @@ void loop(){
           http.end();
           
           if (mostConfidentLabel!="Error") {
-            printDetectionLCD(mostConfidentLabel, confidence);
+            LCD::printDetectionLCD(lcd, mostConfidentLabel, confidence);
             delay(1500);
             //printCoorsLCD(lng, lat);
             alarmC.tick();   
-            
-            servo1.write(90);
-            servo2.write(90);
-            servo3.write(90);
-            servo4.write(90);
-            delay(1500);
-            servo1.write(0);
-            servo2.write(0);
-            servo3.write(0);
-            servo4.write(0);
+
+            if (mostConfidentLabel == "PLASIICO" || mostConfidentLabel == "VIDRIO") {
+              servoPlastik.write(180);
+              servoPaper.write(45);
+              servoGeneral.write(45);
+              delay(3000);
+              servoPlastik.write(0);
+              servoPaper.write(0);
+              servoGeneral.write(0);
+            } else if (mostConfidentLabel == "CARTON" || mostConfidentLabel == "PAPEL") {
+              servoPaper.write(180);
+              servoPlastik.write(45);
+              servoGeneral.write(45);
+              delay(3000);
+              servoPlastik.write(0);
+              servoPaper.write(0);
+              servoGeneral.write(0);
+            } else {
+              servoGeneral.write(180);
+              servoPaper.write(45);
+              servoPlastik.write(45);
+              delay(3000);
+              servoPlastik.write(0);
+              servoPaper.write(0);
+              servoGeneral.write(0);
+            }
           }
           
         } else {
@@ -201,7 +207,9 @@ void loop(){
         lcd.setCursor(0, 1);
         lcd.print("con la camara");
       }
-    }
+    //}
   }
   delay(1000);
+  digitalWrite(light, 0);
+
 }

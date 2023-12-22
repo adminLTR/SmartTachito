@@ -1,0 +1,23 @@
+/* You can add global styles to this file, and also import other style files */
+header{
+    background-color: white;
+    
+    
+    text-align: center;
+    font-size: 20px;
+    
+   
+   
+    
+}
+
+body{
+    text-align: center;
+    
+    background-image:url(pexels-marcel-kodama-3632689.jpg); /* Imagen de uso libre, obtenida de: https://www.pexels.com/es-es/foto/bosque-de-bambu-con-hilera-de-arboles-en-un-dia-soleado-3632689/ Muchas gracias, Marcel Kodama :) */
+    
+}
+
+h1{
+    text-align: center;
+}

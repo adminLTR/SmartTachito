@@ -33,13 +33,14 @@ def send_img(request):
                 imagen_decodificada = base64.b64decode(imagen_base64)
                 imagen_temporal = ContentFile(imagen_decodificada)
 
-                nuevo_registro = Detection(longitude='15', latitude='23')
+                nuevo_registro = Detection(longitude='-77.0856462058371', latitude='-77.0856462058371')
                 nuevo_registro.frame.save(f'{rd.randint(10, 10000)}.jpg', imagen_temporal)
                 
                 if nuevo_registro.most_confident_label is None or nuevo_registro.confidence is None:
                     
                     return JsonResponse({'error': "Image not detected"}, status=400)
-
+                
+                print("---", nuevo_registro.most_confident_label, nuevo_registro.confidence)
                 return JsonResponse({
                     'most_confident_label' : nuevo_registro.most_confident_label,
                     'confidence' : nuevo_registro.confidence
