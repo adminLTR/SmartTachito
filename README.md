@@ -28,6 +28,4 @@ In this architecture, we can see 3 entities:
 - ESP32CAM: It is always turned on waiting for http GET request to send the image captured
 - Django server: At the moment, it only has a model (DETECTION). This server has a view which receives an image base64 encoded, longitude and latitud in a json body. First of all, it decodes the image to .jpg, then processes the image to see what it is and ther sends a Json response with confidence and most_confidence_label.
 All of them are connected to the same wifi red.
- 
-## Circuit
-<img src="./media/circuit.png"/> <br/>
+
