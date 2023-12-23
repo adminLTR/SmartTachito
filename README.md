@@ -21,7 +21,7 @@ Smart Tachito is an intelligent and digital trash can, using IoT, AI models and 
 - I2C
 - LCD Screen
 
-## Architecture
+## Description
 <img src="./media/schema.png"/> <br/>
 In this architecture, we can see 3 entities:
 - ESP32 DEVKIT v1: It works as the controller, is the brain of the system because it makes http requests to the other 2 entities. The way it works is simple, the ultrasonic HC-S404 is always waiting for an object to be detected, once it is detected, ESP32 makes request to ESP32CAM for the image taken. After that, it makes http POST request to the Django server, sending the image decoded in base54, longitude and latitude taken from the GPS module as the request body, the server response is the confidence and the most_confident_label after processing the image using an OpenCV AI model.
