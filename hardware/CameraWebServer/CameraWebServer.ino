@@ -22,12 +22,12 @@
 //#define CAMERA_MODEL_M5STACK_ESP32CAM // No PSRAM
 //#define CAMERA_MODEL_M5STACK_UNITCAM // No PSRAM
 //#define CAMERA_MODEL_M5STACK_CAMS3_UNIT  // Has PSRAM
-#define CAMERA_MODEL_AI_THINKER // Has PSRAM
+// #define CAMERA_MODEL_AI_THINKER // Has PSRAM
 //#define CAMERA_MODEL_TTGO_T_JOURNAL // No PSRAM
 //#define CAMERA_MODEL_XIAO_ESP32S3 // Has PSRAM
 // ** Espressif Internal Boards **
-//#define CAMERA_MODEL_ESP32_CAM_BOARD
-//#define CAMERA_MODEL_ESP32S2_CAM_BOARD
+// #define CAMERA_MODEL_ESP32_CAM_BOARD
+#define CAMERA_MODEL_ESP32S2_CAM_BOARD
 //#define CAMERA_MODEL_ESP32S3_CAM_LCD
 //#define CAMERA_MODEL_DFRobot_FireBeetle2_ESP32S3 // Has PSRAM
 //#define CAMERA_MODEL_DFRobot_Romeo_ESP32S3 // Has PSRAM
@@ -39,17 +39,17 @@
 const char *ssid = "SmartTachito";
 const char *password = "1234";
 
-IPAddress local_IP(192, 168, 1, 10); // IP que quieres asignar al ESP32
+/* IPAddress local_IP(192, 168, 1, 10); // IP que quieres asignar al ESP32
 IPAddress gateway(192, 168, 1, 1);    // Dirección IP del gateway (router)
 IPAddress subnet(255, 255, 255, 0);   // Máscara de subred
 IPAddress primaryDNS(8, 8, 8, 8);     // DNS primario (opcional)
-IPAddress secondaryDNS(8, 8, 4, 4);   // DNS secundario (opcional)
+IPAddress secondaryDNS(8, 8, 4, 4);   // DNS secundario (opcional) */
 
 void startCameraServer();
 void setupLedFlash(int pin);
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   Serial.setDebugOutput(true);
   Serial.println();
 
@@ -139,9 +139,9 @@ void setup() {
   setupLedFlash(LED_GPIO_NUM);
 #endif
 
-  if (!WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS)) {
+  /* if (!WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS)) {
     Serial.println("Fallo al configurar la IP estática");
-  }
+  } */
 
   WiFi.begin(ssid, password);
   WiFi.setSleep(false);
