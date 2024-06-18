@@ -5,7 +5,7 @@
 #include <base64.h>
 // #include <HardwareSerial.h>
 // #include <TinyGPSPlus.h>
-// #include "Ultrasonic.h"
+#include "Ultrasonic.h"
 #include "Alarm.h"
 #include "CScreenLCD.h"
 #include "WifiController.h"
@@ -16,11 +16,10 @@ const char *password = "zavaletayprudencio";
 
 WifiController wifi("SmartTachito", "1234");
 CScreenLCD lcd(0x27, 16, 2);  
-// UltraSonic ultrasonic(27, 26);
+UltraSonic ultrasonic(27, 26);
 Alarm alarmC(12);
 ServoController servos(23, 2, 4);
 const int light = 32;
-const int pir = 27;
 
 HTTPClient http;
 int httpCode;
@@ -36,11 +35,10 @@ const char* cameraServer = "http://192.168.234.129/capture";
 void setup(){
   wifi.begin();
   lcd.begin();
-  // ultrasonic.begin();
+  ultrasonic.begin();
   alarmC.begin();
   servos.begin();
   pinMode(light, OUTPUT);
-  pinMode(pir, INPUT);
   Serial.begin(115200);
 
   wifi.connect(ssid, password, lcd);
@@ -52,10 +50,9 @@ void setup(){
 }
 
 void loop(){
-  // int distance = ultrasonic.getDistance();
+  int distance = ultrasonic.getDistance();
 
-  // if (distance<=30 && distance>=0) {
-  if (digitalRead(pir) == 1) {
+  if (distance<=30 && distance>=0) {
     digitalWrite(light, 1);
     delay(1000);
     if (WiFi.status() == WL_CONNECTED) {
