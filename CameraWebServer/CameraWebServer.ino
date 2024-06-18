@@ -35,17 +35,14 @@
 // ===========================
 // Enter your WiFi credentials
 // ===========================
-/* const char* ssid = "LTR";
-const char* password = "2J8LQV5L"; */
+const char *ssid = "SmartTachito";
+const char *password = "1234";
 
-/* const char *ssid = "LT";
-const char *password = "prudencio"; */
-
-const char *ssid = "esp32xd";
-const char *password = "SmartTachito";
-
-/* const char *ssid = "yisus";
-const char *password = "jorgitoprecioso"; */
+IPAddress local_IP(192, 168, 1, 10); // IP que quieres asignar al ESP32
+IPAddress gateway(192, 168, 1, 1);    // Dirección IP del gateway (router)
+IPAddress subnet(255, 255, 255, 0);   // Máscara de subred
+IPAddress primaryDNS(8, 8, 8, 8);     // DNS primario (opcional)
+IPAddress secondaryDNS(8, 8, 4, 4);   // DNS secundario (opcional)
 
 void startCameraServer();
 void setupLedFlash(int pin);
@@ -141,6 +138,10 @@ void setup() {
   setupLedFlash(LED_GPIO_NUM);
 #endif
 
+  if (!WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS)) {
+    Serial.println("Fallo al configurar la IP estática");
+  }
+
   WiFi.begin(ssid, password);
   WiFi.setSleep(false);
 
@@ -156,6 +157,7 @@ void setup() {
   Serial.print("Camera Ready! Use 'http://");
   Serial.print(WiFi.localIP());
   Serial.println("' to connect");
+
 }
 
 void loop() {
