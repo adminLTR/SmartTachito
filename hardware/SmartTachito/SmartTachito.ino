@@ -15,8 +15,8 @@
 const char *ssid = "LT";
 const char *password = "zavaletayprudencio";
 
-const char *myssid = "SmartTachito";
-const char *mypassword = "1234";
+/* const char *myssid = "SmartTachito";
+const char *mypassword = "1234"; */
 
 // WifiController wifi("SmartTachito", "1234");
 CScreenLCD lcd(0x27, 16, 2);  
@@ -32,32 +32,28 @@ String response;
 String mostConfidentLabel;
 double confidence;
 
-const char* serverUrl = "http://192.168.234.193:8000/api/sendImg/";
+const char* serverUrl = "http://192.168.248.193:8000/api/sendImg/";
 const char* contentType = "application/json";
-const char* cameraServer = "http://192.168.234.129/capture";
+const char* cameraServer = "http://192.168.248.129/capture";
 
 void parseJsonString(String jsonString, String& mostConfidentLabel, double& confidence) {
-    if (jsonString.indexOf("error")>=0) {
-        mostConfidentLabel = "Error";
-        confidence = 0;
-    } else {
-        int index = jsonString.indexOf(',');
-        mostConfidentLabel = jsonString.substring(26, index-1);
-        confidence = jsonString.substring(index+16, jsonString.length()-1).toDouble();
-    }
+  if (jsonString.indexOf("error")>=0) {
+    mostConfidentLabel = "Error";
+    confidence = 0;
+  } else {
+    int index = jsonString.indexOf(',');
+    mostConfidentLabel = jsonString.substring(26, index-1);
+    confidence = jsonString.substring(index+16, jsonString.length()-1).toDouble();
+  }
 }
 
 void setup(){
+  lcd.begin();
   lcd.caratula();
+  delay(3000);
   Serial.begin(115200);
   // wifi.begin();
-  WiFi.mode(WIFI_AP_STA);
-  Serial.println("Creando red");
-  if (!WiFi.softAP(myssid, mypassword)) {
-    log_e("Soft AP creation failed.");
-    while (1);
-  }
-  lcd.begin();
+  
   ultrasonic.begin();
   alarmC.begin();
   servos.begin();

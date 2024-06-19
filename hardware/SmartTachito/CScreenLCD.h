@@ -12,8 +12,6 @@ public:
     void begin() {
         this->lcd->init();                    
         this->lcd->backlight();
-        this->caratula();
-        delay(1500);
         this->lcd->clear();
     }
     void caratula() {
@@ -22,6 +20,13 @@ public:
         this->lcd->print("JorgeKtch LuisLT");
         this->lcd->setCursor(1, 1);
         this->lcd->print("Smart  Tachito");
+    }
+    void crearAP() {
+        this->lcd->clear();
+        this->lcd->setCursor(0, 0);
+        this->lcd->print("Creando");
+        this->lcd->setCursor(1, 1);
+        this->lcd->print("Access point");
     }
     void conectando() {
         this->lcd->setCursor(0, 0);

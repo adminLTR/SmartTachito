@@ -22,12 +22,12 @@
 //#define CAMERA_MODEL_M5STACK_ESP32CAM // No PSRAM
 //#define CAMERA_MODEL_M5STACK_UNITCAM // No PSRAM
 //#define CAMERA_MODEL_M5STACK_CAMS3_UNIT  // Has PSRAM
-// #define CAMERA_MODEL_AI_THINKER // Has PSRAM
+#define CAMERA_MODEL_AI_THINKER // Has PSRAM
 //#define CAMERA_MODEL_TTGO_T_JOURNAL // No PSRAM
 //#define CAMERA_MODEL_XIAO_ESP32S3 // Has PSRAM
 // ** Espressif Internal Boards **
 // #define CAMERA_MODEL_ESP32_CAM_BOARD
-#define CAMERA_MODEL_ESP32S2_CAM_BOARD
+// #define CAMERA_MODEL_ESP32S2_CAM_BOARD
 //#define CAMERA_MODEL_ESP32S3_CAM_LCD
 //#define CAMERA_MODEL_DFRobot_FireBeetle2_ESP32S3 // Has PSRAM
 //#define CAMERA_MODEL_DFRobot_Romeo_ESP32S3 // Has PSRAM
@@ -36,8 +36,8 @@
 // ===========================
 // Enter your WiFi credentials
 // ===========================
-const char *ssid = "SmartTachito";
-const char *password = "1234";
+const char *ssid = "LT";
+const char *password = "zavaletayprudencio";
 
 /* IPAddress local_IP(192, 168, 1, 10); // IP que quieres asignar al ESP32
 IPAddress gateway(192, 168, 1, 1);    // Dirección IP del gateway (router)
@@ -145,6 +145,9 @@ void setup() {
 
   WiFi.begin(ssid, password);
   WiFi.setSleep(false);
+  IPAddress ip(192,168,3,23);   
+  IPAddress gateway(192,168,3,1);   
+  IPAddress subnet(255,255,255,0); 
 
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
