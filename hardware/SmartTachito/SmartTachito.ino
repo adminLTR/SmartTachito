@@ -1,4 +1,5 @@
-// #include <WiFi.h>
+#include <WiFi.h>
+#include <WiFiAP.h>
 // #include <ESPAsyncWebSrv.h>
 #include <HTTPClient.h>
 // #include <LiquidCrystal_I2C.h>  
@@ -8,13 +9,16 @@
 #include "Ultrasonic.h"
 #include "Alarm.h"
 #include "CScreenLCD.h"
-#include "WifiController.h"
+// #include "WifiController.h"
 #include "ServoController.h"
 
 const char *ssid = "LT";
 const char *password = "zavaletayprudencio";
 
-WifiController wifi("SmartTachito", "1234");
+const char *myssid = "SmartTachito";
+const char *mypassword = "1234";
+
+// WifiController wifi("SmartTachito", "1234");
 CScreenLCD lcd(0x27, 16, 2);  
 UltraSonic ultrasonic(27, 26);
 Alarm alarmC(12);
@@ -32,16 +36,38 @@ const char* serverUrl = "http://192.168.234.193:8000/api/sendImg/";
 const char* contentType = "application/json";
 const char* cameraServer = "http://192.168.234.129/capture";
 
+void parseJsonString(String jsonString, String& mostConfidentLabel, double& confidence) {
+    if (jsonString.indexOf("error")>=0) {
+        mostConfidentLabel = "Error";
+        confidence = 0;
+    } else {
+        int index = jsonString.indexOf(',');
+        mostConfidentLabel = jsonString.substring(26, index-1);
+        confidence = jsonString.substring(index+16, jsonString.length()-1).toDouble();
+    }
+}
+
 void setup(){
-  wifi.begin();
+  lcd.caratula();
+  Serial.begin(115200);
+  // wifi.begin();
+  WiFi.mode(WIFI_AP_STA);
+  Serial.println("Creando red");
+  if (!WiFi.softAP(myssid, mypassword)) {
+    log_e("Soft AP creation failed.");
+    while (1);
+  }
   lcd.begin();
   ultrasonic.begin();
   alarmC.begin();
   servos.begin();
   pinMode(light, OUTPUT);
-  Serial.begin(115200);
 
-  wifi.connect(ssid, password, lcd);
+  // wifi.connect(ssid, password, lcd);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    lcd.conectando();
+  }
 
   lcd.conexion();
   delay(2000);
@@ -75,7 +101,7 @@ void loop(){
             Serial.print("Response: ");
             Serial.println(response);
             
-            WifiController::parseJsonString(response, mostConfidentLabel, confidence);
+            parseJsonString(response, mostConfidentLabel, confidence);
             http.end();
             
             if (mostConfidentLabel!="Error") {

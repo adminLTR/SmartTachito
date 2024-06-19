@@ -1,4 +1,5 @@
 #include <WiFi.h>
+#include <WiFiAP.h>
 
 class WifiController
 {
@@ -13,7 +14,10 @@ public:
     ~WifiController() {}
     void begin() {
         WiFi.mode(WIFI_AP_STA);
-        WiFi.softAP(this->ssid, this->password);
+        if (!WiFi.softAP(this->ssid, this->password)) {
+          log_e("Soft AP creation failed.");
+          while (1);
+        }
     }
     void connect(const char*ssid, const char*password, CScreenLCD lcd) {
         this->wifiSsid = ssid;
