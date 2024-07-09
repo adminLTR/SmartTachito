@@ -15,7 +15,25 @@ import io
 import imutils
 import os
 
-class Detection(models.Model):
+class TrashCan(models.Model):
+    temperature = models.FloatField(default=0, null=True, blank=True)
+    humidity = models.FloatField(default=0, null=True, blank=True)
+
+    latitude = models.CharField(max_length=20, default='-12.055747005302624', null=True)
+    longitude = models.CharField(max_length=20, default='-77.0856462058371', null=True)
+
+    def __str__(self) -> str:
+        return str(self.pk)
+
+    class Meta:
+        verbose_name = "SmartTachito"
+        verbose_name_plural = "SmartTachitos"
+    
+
+class Residue(models.Model):
+
+    trash_can = models.ForeignKey(TrashCan, null=True, on_delete=models.CASCADE, blank=True, default=None)
+
     datetime = models.DateTimeField("Date and time of detection", auto_now_add=True, null=True)
     
     frame = models.ImageField(upload_to="frames/", null=True)
@@ -128,5 +146,5 @@ class Detection(models.Model):
     admin_image_detected.allow_tags = True
 
     class Meta:
-        verbose_name = "Predicción"
-        verbose_name_plural = "Predicciones"
+        verbose_name = "Residuo"
+        verbose_name_plural = "Residuos"

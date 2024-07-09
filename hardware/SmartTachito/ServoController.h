@@ -9,14 +9,17 @@ private:
     int plastic;
     int paper;
     int general;
+    int closedAngle = 10;
+    int openedAngle = 90;
+    int mediumAngle = 25;
     void openGate(Servo*open, Servo*s1, Servo*s2) {
-        open->write(180);
-        s1->write(45);
-        s2->write(45);
+        open->write(this->openedAngle);
+        s1->write(this->mediumAngle);
+        s2->write(this->mediumAngle);
         delay(3000);
-        open->write(0);
-        s1->write(0);
-        s2->write(0);
+        open->write(this->closedAngle);
+        s1->write(this->closedAngle);
+        s2->write(this->closedAngle);
     }
 public:
     ServoController(int plastic, int paper, int general) : plastic(plastic), paper(paper), general(general) { }
@@ -25,9 +28,9 @@ public:
         this->servoPaper->attach(paper);
         this->servoPlastic->attach(plastic);
         this->servoGeneral->attach(general);
-        this->servoPlastic->write(0);
-        this->servoPaper->write(0);
-        this->servoGeneral->write(0);
+        this->servoPlastic->write(this->closedAngle);
+        this->servoPaper->write(this->closedAngle);
+        this->servoGeneral->write(this->closedAngle);
     }
     void openGeneral() {
         this->openGate(this->servoGeneral, this->servoPaper, this->servoPlastic);

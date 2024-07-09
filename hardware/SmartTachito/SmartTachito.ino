@@ -1,16 +1,20 @@
 #include <WiFi.h>
 #include <WiFiAP.h>
-// #include <ESPAsyncWebSrv.h>
-#include <HTTPClient.h>
-// #include <LiquidCrystal_I2C.h>  
+
+#include <HTTPClient.h> 
 #include <base64.h>
-// #include <HardwareSerial.h>
-// #include <TinyGPSPlus.h>
+#include <Wire.h>
+#include <HardwareSerial.h>
+#include <TinyGPSPlus.h>
+
 #include "Ultrasonic.h"
 #include "Alarm.h"
 #include "CScreenLCD.h"
-// #include "WifiController.h"
+#include "WifiController.h"
 #include "ServoController.h"
+
+#define RXD2 16
+#define TXD2 17
 
 const char *ssid = "LT";
 const char *password = "zavaletayprudencio";
@@ -18,7 +22,7 @@ const char *password = "zavaletayprudencio";
 /* const char *myssid = "SmartTachito";
 const char *mypassword = "1234"; */
 
-// WifiController wifi("SmartTachito", "1234");
+WifiController wifi("SmartTachito", "FISI - B22");
 CScreenLCD lcd(0x27, 16, 2);  
 UltraSonic ultrasonic(27, 26);
 Alarm alarmC(12);
@@ -32,49 +36,41 @@ String response;
 String mostConfidentLabel;
 double confidence;
 
-const char* serverUrl = "http://192.168.248.193:8000/api/sendImg/";
+const char* serverUrl = "http://192.168.252.193:8000/api/sendImg/";
 const char* contentType = "application/json";
-const char* cameraServer = "http://192.168.248.129/capture";
+const char* cameraServer = "http://192.168.252.129/capture"; 
 
-void parseJsonString(String jsonString, String& mostConfidentLabel, double& confidence) {
-  if (jsonString.indexOf("error")>=0) {
-    mostConfidentLabel = "Error";
-    confidence = 0;
-  } else {
-    int index = jsonString.indexOf(',');
-    mostConfidentLabel = jsonString.substring(26, index-1);
-    confidence = jsonString.substring(index+16, jsonString.length()-1).toDouble();
-  }
-}
+HardwareSerial NEO6M(1);
+TinyGPSPlus gps;
+int isConnected = 0;
 
 void setup(){
   lcd.begin();
   lcd.caratula();
   delay(3000);
   Serial.begin(115200);
-  // wifi.begin();
+
+  wifi.begin();
   
   ultrasonic.begin();
   alarmC.begin();
   servos.begin();
   pinMode(light, OUTPUT);
 
-  // wifi.connect(ssid, password, lcd);
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
-    lcd.conectando();
-  }
+  wifi.connect(ssid, password, lcd);
 
   lcd.conexion();
   delay(2000);
   lcd.caratula();
+
+  NEO6M.begin(9600, SERIAL_8N1, RXD2, TXD2);
 
 }
 
 void loop(){
   int distance = ultrasonic.getDistance();
 
-  if (distance<=30 && distance>=0) {
+  if (distance<=39 && distance>=0) {
     digitalWrite(light, 1);
     delay(1000);
     if (WiFi.status() == WL_CONNECTED) {
@@ -88,7 +84,13 @@ void loop(){
           http.end();
           http.begin(serverUrl);
           http.addHeader("Content-Type", contentType);
-          String payload = "{\"frame\":\"" + base64::encode((uint8_t*)image_data.c_str(), image_data.length()) + "\"}";
+          String payload = "{\"frame\":\"" + base64::encode((uint8_t*)image_data.c_str(), image_data.length()) + "\"";
+          if (NEO6M.available() > 0 && gps.encode(NEO6M.read())) {
+            if (gps.location.isValid()) {
+              payload += ", \"latitude\":\"" + String(gps.location.lat(), 6) + "\", \"longitude\":\"" + String(gps.location.lng(), 6) + "\"";
+            }
+          }
+          payload += "}";
           httpCode = http.POST(payload);
           if (httpCode > 0) {
 
@@ -97,16 +99,14 @@ void loop(){
             Serial.print("Response: ");
             Serial.println(response);
             
-            parseJsonString(response, mostConfidentLabel, confidence);
+            WifiController::parseJsonString(response, mostConfidentLabel, confidence);
             http.end();
+            alarmC.tick();  
             
             if (mostConfidentLabel!="Error") {
-              lcd.printDetection(mostConfidentLabel, confidence);
-              delay(1500);
-              alarmC.tick();   
-
               if (confidence<60) {
                 servos.openGeneral();
+                mostConfidentLabel = "GENERALES";
               } else {
                 if (mostConfidentLabel == "PLASTICO" || mostConfidentLabel == "VIDRIO") {
                   servos.openPlastic();
@@ -116,6 +116,7 @@ void loop(){
                   servos.openGeneral();
                 }
               }
+              lcd.printDetection(mostConfidentLabel, confidence);
             }
           } else {
             lcd.printError("servidor");

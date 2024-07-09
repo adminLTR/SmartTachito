@@ -190,13 +190,10 @@ JAZZMIN_SETTINGS = {
         {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
 
         # external url that opens in a new window (Permissions can be added)
-        {"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
+        {"name": "Map", "url": "http://192.168.1.9:5173/"},
 
         # model admin to link to (Permissions checked against model)
         {"model": "auth.User"},
-
-        # App with dropdown menu to all its models pages (Permissions checked against models)
-        {"app": "books"},
     ],
 
     #############
@@ -205,7 +202,7 @@ JAZZMIN_SETTINGS = {
 
     # Additional links to include in the user menu on the top right ("app" url type is not allowed)
     "usermenu_links": [
-        {"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
+        {"name": "Map", "url": "http://192.168.1.9:5173/"},
         {"model": "auth.user"}
     ],
 
@@ -231,8 +228,8 @@ JAZZMIN_SETTINGS = {
     # Custom links to append to app groups, keyed on app name
     "custom_links": {
         "books": [{
-            "name": "Make Messages", 
-            "url": "make_messages", 
+            "name": "Make", 
+            "url": "http://192.168.1.9:5173/", 
             "icon": "fas fa-comments",
             "permissions": ["books.view_book"]
         }]
@@ -247,26 +244,8 @@ JAZZMIN_SETTINGS = {
         "auth.user": "fas fa-user",
         "auth.Group": "fas fa-users",
         ###############################
-        "api.Detection": "fas fa-trash",
-        "estudiante.Alumno": "fas fa-user-graduate",
-        "estudiante.Alumno_Seccion": "fas fa-chalkboard-teacher",
-        "estudiante.Imagen": "fas fa-images",
-        ###############################
-        "cronograma.Clase": "fas fa-calendar-alt",
-        ###############################
-        "docente.Docente": "fas fa-user",
-        "docente.Docente_Seccion": "fas fa-chalkboard-teacher",
-        ###############################
-        "cronograma.Curso": "fas fa-book",
-        "cronograma.Periodo": "fas fa-calendar-alt",
-        "cronograma.Seccion": "fas fa-chalkboard-teacher",
-        "cronograma.Aula": "fas fa-chalkboard",
-        ###############################
-        "universidad.Escuela": "fas fa-school",
-        "universidad.Facultad": "fas fa-university",
-        ###############################
-        "login_history.LoginRecord": "fas fa-history",
-        ###############################
+        "api.TrashCan": "fas fa-trash",
+        "api.Residue": "fas fa-recycle",
         
     },
     # Icons that are used when one is not manually specified

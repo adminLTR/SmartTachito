@@ -23,7 +23,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 router = routers.DefaultRouter()
-router.register(r'detections', views.DetectionViewSet)
+router.register(r'residues', views.ResidueViewSet)
+router.register(r'trash_cans', views.TrashCanViewSet)
 
 admin.site.site_title = "APIS"
 admin.site.site_header = "APIS"
@@ -35,5 +36,5 @@ urlpatterns = [
     path('api/', include('api.urls')),
 ]
 
-
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
