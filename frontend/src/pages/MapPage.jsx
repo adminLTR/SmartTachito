@@ -64,12 +64,12 @@ function MapPage() {
             offsetLeft={-20}
             offsetTop={-10}
             onClick={() => handleMarkerClick(can)}
-            color={getColorCan()}
             >
+              <img src="/logo.png" alt="logo" width={30}/>
             </Marker>
           ))}        
         </Map> 
-      }
+      } 
       {selectedMarker!==null &&  <OffcanvaCan
         selectedCan={selectedMarker}
         setSelectedCan={setSelectedMarker}

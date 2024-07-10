@@ -47,7 +47,9 @@ export function verifyDate(begin, end, test) {
 
 export function parseDate(date) {
     const d = new Date(date);
-    return `${d.getDate()}-${d.getMonth()}-${d.getFullYear()}`;
+    const m = d.getMonth() + 1;
+    const f = d.getDate();
+    return `${m < 10 ? '0'+m : m}-${f < 10 ? '0'+f : f}`;
 }
 
 export function parseHour(date) { 
@@ -58,6 +60,7 @@ export function parseHour(date) {
 export function getDataset(data) {
     const dataset = [];
     const labels = [];
+    let sum = 0;
     data.forEach(residue => {
         let index = labels.indexOf(residue.most_confident_label);
         if (index!=-1) {
@@ -66,6 +69,57 @@ export function getDataset(data) {
             labels.push(residue.most_confident_label);
             dataset.push(1);
         }
+        sum++;
     });
-    return [labels, dataset];
+    return [labels, dataset.map(q => q*100/sum)];
+}
+/**
+ * 
+ * @param {Date | string} today 
+ */
+export function getWeek(today) {
+    const week = [];
+    today = new Date(today);
+    for (let i = 6; i >= 0; i--) {
+        const x = new Date(today);
+        x.setDate(x.getDate() - i);
+        week.push(x);
+    }
+    return week;
+}
+
+export function getDatasetWeek(residues) {
+    const week = getWeek(new Date());
+    const dataset = [];
+    residues.forEach(residue => {
+        let index = labels.indexOf(residue.most_confident_label);
+        if (index!=-1) {
+            dataset[index]++;
+        } else {
+            dataset.push({label:residue.most_confident_label, data:[0,0,0,0,0,0,0]});
+        }
+        sum++;
+    });
+    residues.forEach(r => {
+        const date = new Date(r.datetime);
+        const index = -1;
+        for (let i = 0; i < week.length; i++) {
+            if (equalsDates(week[i], date)) {
+                index = i;
+                break;
+            }
+        }
+        if (index!==-1) {
+            dataset[index]++;
+        }
+    })
+}
+
+/**
+ * 
+ * @param {Date | string} date1 
+ * @param {Date | string} date2 
+ */
+export function equalsDates(date1, date2) {
+    return date1.getFullYear()===date2.getFullYear() && date1.getDate()===date2.getDate() && date1.getMonth()===date2.getMonth();
 }

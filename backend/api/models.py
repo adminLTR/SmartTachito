@@ -55,6 +55,7 @@ class Residue(models.Model):
         super().save(*args, **kwargs)
         if self.frame:
             self.process_image_for_detection()
+        
 
     def process_image_for_detection(self):
         # Model architecture and weights

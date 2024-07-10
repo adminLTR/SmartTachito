@@ -36,7 +36,6 @@ def send_img(request):
     if request.method == 'POST':
         # data = request.POST #json
         data = json.loads(request.body)
-        print(data)
         imagen_base64 = data.get('frame', None)
         lng, lat = data.get("longitude", '-77.0856462058371'), data.get("latitude", '-77.0856462058371')
         if imagen_base64 is not None:

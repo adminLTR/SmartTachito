@@ -190,14 +190,14 @@ JAZZMIN_SETTINGS = {
         {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
 
         # external url that opens in a new window (Permissions can be added)
-        {"name": "Map", "url": "http://192.168.1.9:5173/"},
+        {"name": "Map", "url": "http://localhost:5173/"},
 
         # model admin to link to (Permissions checked against model)
         {"model": "auth.User"},
     ],
 
-    #############
-    # User Menu #
+    ############# -12.05342
+    # User Menu # -77.0697115
     #############
 
     # Additional links to include in the user menu on the top right ("app" url type is not allowed)

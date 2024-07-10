@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getResiduesCan } from "../js/api";
-import { Pie } from 'react-chartjs-2';
-import { getDataset, getColorCan } from "../js/helpers";
+import { Pie, Line } from 'react-chartjs-2';
+import { getDataset, getWeek, parseDate } from "../js/helpers";
 import {Chart as ChartJS} from 'chart.js/auto';
 
 
@@ -10,11 +10,6 @@ export default function OffcanvaCan (
     ) {
 
     const [residuesFilter, setResiduesFilter] = useState(residues.filter(r => r.trash_can == selectedCan.id))
-
-    /* useEffect(()=>{
-        setResiduesFilter(residues.filter(r => r.trash_can == selectedCan.id))
-        console.log(residuesFilter)
-    }, []); */
 
     return (
         <div className="bg-white w-1/3 absolute top-0 right-0 z-20 h-full p-4 overflow-scroll">
@@ -29,15 +24,45 @@ export default function OffcanvaCan (
                 {/* <h4 className="text-2xl">
                     {crimen.name}
                 </h4> */}
-                <div className="rounded w-full">
+                <div className="rounded w-2/3 m-auto border-b-2 p-4">
+                    <h3 className="text-center uppercase">
+                        % total de residuos
+                    </h3>
                     {residuesFilter.length!==0 && <Pie
                         data={{
                             labels: getDataset(residuesFilter)[0],
                             datasets:[{
                                 data: getDataset(residuesFilter)[1],
                                 hoverOffset: 4,
-                                // backgroundColor: getDataset(residuesFilter)[0].map(c => getColorCan())
                             }]
+                        }}
+                    />
+                    }
+                </div>
+                <div className="rounded border-b-2 p-4">
+                    <h3 className="text-center uppercase w-2/3 m-auto">
+                        Residuos detectados en la última semana
+                    </h3>
+                    {residuesFilter.length!==0 && <Line
+                        data={{
+                            labels: getWeek(new Date()).map(date => parseDate(date)),
+                            datasets: [
+                                {
+                                    data: getWeek(new Date()).map(date => Math.floor(Math.random()*(20))),
+                                    borderColor: "red",
+                                    label: "Plastico"
+                                },
+                                {
+                                    data: getWeek(new Date()).map(date => Math.floor(Math.random()*(20))),
+                                    borderColor: "green",
+                                    label: "Papel"
+                                },
+                                {
+                                    data: getWeek(new Date()).map(date => Math.floor(Math.random()*(20))),
+                                    borderColor: "blue",
+                                    label: "General"
+                                },
+                            ]
                         }}
                     />}
                 </div>
