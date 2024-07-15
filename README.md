@@ -2,7 +2,7 @@
 Smart Tachito is an intelligent and digital trash can, using IoT, AI models and digital system knowledge.
 
 ## Colaborators
-- Jose Luis La Torre Romero (LTprograms)
+- Jose Luis La Torre Romero (AdminLTR)
 - Jorge Jesús Quispe Villaverde (Jorgektch)
 
 ## Technologies
