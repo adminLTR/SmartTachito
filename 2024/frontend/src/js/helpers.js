@@ -102,7 +102,7 @@ export function getDatasetWeek(residues) {
     });
     residues.forEach(r => {
         const date = new Date(r.datetime);
-        const index = -1;
+        let index = -1;
         for (let i = 0; i < week.length; i++) {
             if (equalsDates(week[i], date)) {
                 index = i;
