@@ -61,7 +61,6 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'backend.urls'
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 TEMPLATES = [
     {
@@ -140,6 +139,8 @@ import os
 ##  keeep as staticfiles for jasmine
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # new
 STATICFILES_DIRS  = [os.path.join(BASE_DIR, 'static')]  # new
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 #################################################################
 ################################################################# 
 
