@@ -139,7 +139,7 @@ import os
 ##  keeep as staticfiles for jasmine
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # new
 STATICFILES_DIRS  = [os.path.join(BASE_DIR, 'static')]  # new
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.StaticFilesStorage'
 
 #################################################################
 ################################################################# 
