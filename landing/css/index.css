@@ -1,0 +1,72 @@
+:root {
+    --main: rgb(0, 48, 80);
+    --second: rgb(22, 210, 231);
+}
+
+.bg-main {
+    background-color: var(--main);
+}
+.bg-second {
+    background-color: var(--second);
+}
+.text-main {
+    color: var(--main);
+}
+.text-second {
+    color: var(--second);
+}
+header ul .nav-link {
+    color: white;
+    font-weight: bold;
+    transition: all ease-in-out .2s;
+    text-align: center;
+}
+
+header ul .nav-link:hover, header ul .nav-link.link-active {
+    color: white;
+}
+
+#home-content {
+    text-align: justify;
+}
+#lang option {
+    background-repeat: no-repeat;
+    padding-left: 40px;
+}
+#technologies .tech-bg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+#technologies .position-relative {
+    background-color: rgba(236, 238, 255, 0.703);
+}
+#technologies h3 {
+    font-size: 40px;
+    text-transform: uppercase;
+}
+#technologies h4 {
+    text-transform: uppercase;
+    text-align: center;
+}
+.tech-container {
+    width: 100px;
+}
+
+.navbar .dropdown-toggle {
+    color: white !important; /* Asegura que el enlace de la lista desplegable mantenga el color blanco */
+}
+
+.navbar .dropdown-toggle::after {
+    color: white !important; /* Asegura que el icono del caret también sea blanco */
+}
+
+@media (max-width: 300px) {
+    #technologies h3 {
+        font-size: 35px;
+    }
+}
